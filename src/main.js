@@ -2,6 +2,9 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import { OhVueIcon, addIcons } from "oh-vue-icons";
+import Vueform from '@vueform/vueform'
+import vueformConfig from './../vueform.config'
+
 import { 
     RiSearchEyeLine,
     RiNotification4Line,
@@ -20,7 +23,10 @@ import {
     CoShare,
     CoInstagram,
     RiMoreFill,
-    RiMore2Fill
+    RiMore2Fill,
+    FcGoogle,
+    MdEmailRound,
+    BiEye
  } 
 
 from "oh-vue-icons/icons";
@@ -45,10 +51,14 @@ addIcons(RiSearchEyeLine,
     CoShare,
     CoInstagram,
     RiMoreFill,
-    RiMore2Fill
+    RiMore2Fill,
+    FcGoogle,
+    MdEmailRound,
+    BiEye
     );
 
 
 app.component('v-icon',OhVueIcon)
 app.use(router)
+app.use(Vueform, vueformConfig)
 app.mount('#app')

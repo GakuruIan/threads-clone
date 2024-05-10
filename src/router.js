@@ -7,11 +7,12 @@ import Main from './Pages/Main/Main.vue'
 import Threads from './Pages/Threads/Threads.vue'
 import Profile from './Pages/Profile/Profile.vue'
 import Thread from './Pages/Thread/Thread.vue'
-
+import EmailPassword from './Pages/Auth/EmailPassword.vue'
 
 const routes = [
     {path:'/login',component:Login},
     {path:'/register',component:Register},
+    {path:'/email-password',component:EmailPassword},
     {
         path:'/',
         component:Main,

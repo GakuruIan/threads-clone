@@ -5,7 +5,10 @@
 
          <!-- logo -->
           <div class="">
-            <img :src="logo" alt="logo" class="h-10 w-10 object-fit">
+            <!-- !! remove this link -->
+            <router-link to="/login" >
+              <img :src="logo" alt="logo" class="h-10 w-10 object-fit">
+            </router-link>
           </div>
           <!-- logo -->
 
