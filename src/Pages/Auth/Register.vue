@@ -30,4 +30,22 @@
 
 <script setup>
 import logo from '../../assets/logo.png'
+import { onMounted } from 'vue';
+// vuex
+import { useStore } from 'vuex';
+
+// router
+import { useRouter } from 'vue-router';
+
+const router  = useRouter()
+const store = useStore()
+
+onMounted(()=>{
+  const isLoggedIn = store.getters.isLoggedIn
+
+  if(isLoggedIn){
+    router.push('/')
+  }
+})
+
 </script>

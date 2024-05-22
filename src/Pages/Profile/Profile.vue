@@ -3,30 +3,31 @@
      <div class="">
         <div class="flex items-center justify-between w-full mb-4">
           <div class="">
-            <h6 class="text-2xl font-medium">Username</h6>
+            <h6 class="text-2xl font-medium">{{username}}</h6>
           </div>
           <div class="">
-            <img :src="pic" alt="" class="h-20 w-20 rounded-full object-fit">
+            <!-- !! add no image -->
+            <img :src="user?.avatar.url" alt="" class="h-20 w-20 rounded-full object-fit">
           </div>
         </div>
 
         <!-- bio -->
        <div class="">
-        <p class="text-sm max-w-sm">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aut atque quas dolores qui dolor enim maiores, itaque sint nesciunt? Aperiam.</p>
+        <p class="text-sm max-w-sm">{{ user?.bio }}</p>
        </div>
 
        <!-- info -->
        <div class="flex items-center justify-between my-4">
          <div class="flex items-center gap-x-4">
              <div class="">
-               <span class="text-gray-400 text-[15px]">10 Posts</span>
+               <span class="text-gray-400 text-[15px]">{{ user?.posts.length }} Posts</span>
               
              </div>
              <div class="">
-               <span class="text-gray-400 text-[15px]">100 Followers</span>
+               <span class="text-gray-400 text-[15px]">{{  user?.followers.length }} Followers</span>
              </div>
              <div class="">
-               <span class="text-gray-400 text-[15px]">10 following</span>
+               <span class="text-gray-400 text-[15px]">{{  user?.following.length }} following</span>
                
              </div>
          </div>
@@ -75,13 +76,47 @@
      </div>
      <!-- slider -->
 
-     <PostCard/>
+     <!-- post card -->
+
+     <!-- !!split post card into author and post object -->
+
+     <!-- <template v-for="thread in user?.posts" :key="thread._id">
+      <PostCard :Thread="thread"/>
+    </template> -->
+     
   </div>
 </template>
 
 <script setup>
+import { ref,onMounted} from 'vue';
+
+import { BaseUrl } from '../../config/Axios';
+
 import pic from '../../assets/pic.jpg'
 import PostCard from '../../components/PostCard/PostCard.vue'
+
+let user = ref(null)
+
+const props=defineProps({
+  username:String
+})
+
+const GetUser=(username)=>{
+    BaseUrl(`/user/${username}`).then((response)=>{
+      if(response.status === 200 & response.statusText == 'OK'){
+        user.value =response.data
+        console.log(response.data)
+      }
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+}
+
+onMounted(()=>{
+    GetUser(props.username)
+})
+
 </script>
 
-<!-- !! create post , comments for comments, search -->
+<!-- !!  comments for comments, search -->

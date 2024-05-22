@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between w-full px-6 md:px-2 lg:px-0">
         <v-icon name="ri-home-line" scale="1.2" class="hover:cursor-pointer"/>
         <v-icon name="ri-search-eye-line" scale="1.2" class="hover:cursor-pointer"/>
-        <v-icon name="bi-heart" scale="1.2" class="hover:cursor-pointer"/>
+        <v-icon name="md-addaphoto-outlined" scale="1.1"/>
         <v-icon name="ri-notification-4-line" scale="1.2" class="hover:cursor-pointer" />
         <v-icon name="co-user" scale="1.2" class="hover:cursor-pointer"/>
     </div>

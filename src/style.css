@@ -22,3 +22,7 @@ h1,h2,h3,h4{
 h6,p,a{
   font-family: "Saira Condensed", sans-serif;
 }
+
+.form-bg-input{
+  background-color: #282828;
+}

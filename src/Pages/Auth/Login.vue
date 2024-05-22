@@ -20,7 +20,7 @@
 
            <Vueform 
             :endpoint=handleSubmit
-            method="POST"
+             method="POST"
            >
              <TextElement name="username" size="lg" label="Username" placeholder="Enter username" 
                 :add-class="{input: 'bg-light-200 '}" 
@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import logo from '../../assets/logo.png'
 // routing
 import { BaseUrl } from '../../config/Axios';
@@ -85,10 +85,22 @@ import { useRouter } from 'vue-router'
 // toast
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+// vuex
+import { useStore } from 'vuex';
 
 const router = useRouter()
+const store =useStore()
 
 let isLoading =ref(false)
+
+onMounted(()=>{
+  const isLoggedIn = store.getters.isLoggedIn
+
+  if(isLoggedIn){
+    router.push('/')
+  }
+  
+})
 
 const handleSubmit=async(FormData,form$)=>{
   isLoading.value= true
@@ -122,6 +134,9 @@ const handleSubmit=async(FormData,form$)=>{
         })
       
       toast.done(id);
+      
+      store.dispatch('setUser',response.data)
+      store.dispatch('setSuccessLogin',true)
 
       router.push('/')
     }
@@ -140,6 +155,7 @@ const handleSubmit=async(FormData,form$)=>{
       hideProgressBar:true
     })
 
+   
     toast.done(id)
     }
     
@@ -153,6 +169,7 @@ const handleSubmit=async(FormData,form$)=>{
       })
 
     }
+    
     console.log(error)
   }
   finally{

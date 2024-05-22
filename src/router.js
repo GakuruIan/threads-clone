@@ -1,4 +1,4 @@
-import { createMemoryHistory, createRouter } from 'vue-router'
+import { createMemoryHistory, createRouter,createWebHistory } from 'vue-router'
 
 // components
 import Login from './Pages/Auth/Login.vue'
@@ -8,6 +8,7 @@ import Threads from './Pages/Threads/Threads.vue'
 import Profile from './Pages/Profile/Profile.vue'
 import Thread from './Pages/Thread/Thread.vue'
 import EmailPassword from './Pages/Auth/EmailPassword.vue'
+import Create from './Pages/CreateThread/Create.vue'
 
 const routes = [
     {path:'/login',component:Login},
@@ -24,13 +25,20 @@ const routes = [
                 }
             },
             {
-                path:'profile',
+                path:'@:username',
                 components:{
                     content :Profile
+                },
+                props: true
+            },
+            {
+                path:'create-thread',
+                components:{
+                    content:Create
                 }
             },
             {
-                path:'thread',  //!add post id
+                path:'thread/:id', 
                 components:{
                     content:Thread
                 }
@@ -40,7 +48,8 @@ const routes = [
 ]
 
 const router = createRouter({
-    history:createMemoryHistory('http://localhost:5173/'),
+    history:createWebHistory(),
+    mode: 'history',
     routes,
 })
 

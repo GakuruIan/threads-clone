@@ -1,15 +1,15 @@
 <template>
      <div class="relative bg-dark-300 px-2 mb-14 md:mb-0 py-2 ">
 
-        <div to="/thread" class="relative md:border-b-2 md:border-light-100 pb-3">
+        <div  class="relative md:border-b-2 md:border-light-100 pb-3">
 
             <!-- card header -->
             <div class="flex items-center justify-between py-2 ">
                 <div class="flex items-center gap-x-2">
-                    <img class="w-10 h-10 rounded-full" :src="pic" alt="user photo" />
+                    <img class="w-10 h-10 rounded-full" :src="Thread.author.avatar.url" alt="user photo" />
 
                     <div class="flex flex-col">
-                        <router-link to="/profile" class="text-base md:text-base tracking-normal font-thin">Username</router-link>
+                        <router-link :to="`@${Thread.author.username}`" class="text-base md:text-base tracking-normal font-thin">{{ Thread.author.username }}</router-link>
                         <time class="text-xs font-normal text-gray-400">2 hours ago</time>
                     </div>
                 </div>
@@ -18,13 +18,30 @@
             <!-- card header -->
 
             <!-- card content -->
-            <router-link to="/thread" class="relative flex">
+            <div  class="relative flex">
                 <div class="absolute left-3 border-s border-gray-400 h-full"></div>
 
                 <div class="px-6 flex-1">
-                    <p class="mb-3 text-sm"> Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut sunt quo eum, eius placeat omnis in ipsa. Placeat, eaque dolorum.</p>
-                    <!-- image -->
-                    <img :src="tshirt" alt="photo" class="h-80 md:h-96 w-96 object-fit">
+                    <router-link :to="`/thread/${Thread._id}`">
+                        <p class="mb-3 text-sm"> {{ Thread.caption }}</p>
+                        <!-- image -->
+
+                        <div v-if="Thread.photos.length > 0">
+                            <!-- if there is more than two images -->
+                            <div v-if="Thread.photos.length > 1">
+                                <div class="grid grid-cols-2 gap-x-2">
+                                    <div v-for="photo in Thread.photos" :key="photo._id">
+                                        <img :src="photo.path"  alt="photo" class="h-80 md:h-full w-full object-fit rounded-lg">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-else v-for="photo in Thread.photos" :key="photo._id">
+                                <img :src="photo.path"  alt="photo" class="h-80 md:h-96 w-96 object-fit rounded-lg">
+                            </div>
+
+                        </div>
+                    </router-link>
 
                     <!-- icons -->
                     <div class="mt-1 ">
@@ -58,7 +75,7 @@
                     </div>
                 </div>
                
-            </router-link>
+            </div>
             <!-- card content -->
             <div class="flex -space-x-3 rtl:space-x-reverse">
                 <img class="w-5 h-5 border-2 border-white rounded-full dark:border-gray-800" :src="tshirt" alt="">
@@ -72,8 +89,10 @@
 </template>
 
 <script setup>
-import pic from '../../assets/pic.jpg'
 import tshirt from '../../assets/tshirt.jpg'
 
 // prop of object
+defineProps({
+  Thread: Object
+})
 </script>
