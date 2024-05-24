@@ -3,7 +3,7 @@
      <div class="">
         <div class="flex items-center justify-between w-full mb-4">
           <div class="">
-            <h6 class="text-2xl font-medium">{{username}}</h6>
+            <h6 class="text-2xl font-medium">{{user?.username}}</h6>
           </div>
           <div class="">
             <!-- !! add no image -->
@@ -20,14 +20,14 @@
        <div class="flex items-center justify-between my-4">
          <div class="flex items-center gap-x-4">
              <div class="">
-               <span class="text-gray-400 text-[15px]">{{ user?.posts.length }} Posts</span>
+               <span class="text-gray-400 text-[15px]">{{ user?.posts }} Posts</span>
               
              </div>
              <div class="">
-               <span class="text-gray-400 text-[15px]">{{  user?.followers.length }} Followers</span>
+               <span class="text-gray-400 text-[15px]">{{  user?.followers}} Followers</span>
              </div>
              <div class="">
-               <span class="text-gray-400 text-[15px]">{{  user?.following.length }} following</span>
+               <span class="text-gray-400 text-[15px]">{{  user?.following}} following</span>
                
              </div>
          </div>
@@ -60,19 +60,25 @@
         <div class="flex-1 text-sm font-medium text-center text-gray-400 border-gray-700">
             <ul class=" flex flex-wrap -mb-px">
                 <li class="me-2 flex-1">
-                    <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:border-gray-300 hover:text-gray-300">Threads</a>
+                    <router-link :to="`/@${username}`" class="inline-block p-4  rounded-t-lg hover:border-gray-300 hover:text-gray-300">Threads</router-link>
                 </li>
                 <li class="me-2 flex-1">
-                    <a href="#" class="inline-block p-4  border-b-2  rounded-t-lg active text-blue-500 border-blue-500" aria-current="page">Replies</a>
+                    <router-link :to="`/@${username}/replies`" class="inline-block p-4   hover:border-gray-300 hover:text-gray-300  rounded-t-lg">Replies</router-link>
                 </li>
                 <li class="me-2 flex-1">
-                    <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg  hover:border-gray-300 hover:text-gray-300">Reposts</a>
+                    <router-link :to="`/@${username}/mentions`" class="inline-block p-4  rounded-t-lg  hover:border-gray-300 hover:text-gray-300">Mentions</router-link>
                 </li>
 
             </ul>
         </div>
         <!-- links buttons -->
       </div>
+     </div>
+
+     <div class="mt-6">
+       <router-view  name="subcontent">
+        
+       </router-view>
      </div>
      <!-- slider -->
 
@@ -90,32 +96,62 @@
 <script setup>
 import { ref,onMounted} from 'vue';
 
+// vuex
+import { useStore } from 'vuex';
+// router
+import { useRouter } from 'vue-router'
 import { BaseUrl } from '../../config/Axios';
 
-import pic from '../../assets/pic.jpg'
+// toast
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+
 import PostCard from '../../components/PostCard/PostCard.vue'
 
 let user = ref(null)
+const store = useStore()
+
+const router =useRouter()
+
+const token = store.getters.user.accessToken
+
 
 const props=defineProps({
   username:String
 })
 
 const GetUser=(username)=>{
-    BaseUrl(`/user/${username}`).then((response)=>{
+    BaseUrl(`/user/${username}`,
+      {
+        headers:{
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    ).then((response)=>{
       if(response.status === 200 & response.statusText == 'OK'){
         user.value =response.data
-        console.log(response.data)
       }
+
     })
     .catch((err)=>{
-      console.log(err)
+      const {response} = err
+      if(response.status === 401){
+        toast.error(`Access Denied ${response.data.message}`,{
+          position:toast.POSITION.TOP_CENTER,
+          transition: toast.TRANSITIONS.SLIDE,
+          theme:'colored',
+          autoClose:2000,
+          hideProgressBar: true,
+        })
+        router.push('/')
+      }
     })
 }
 
 onMounted(()=>{
     GetUser(props.username)
 })
+
 
 </script>
 

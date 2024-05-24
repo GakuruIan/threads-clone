@@ -2,12 +2,12 @@
     <div class="my-3 py-1">
         <div class="flex gap-x-1 items-start md:border-b-2 md:border-light-100">
             <div class="w-8 h-8">
-                <img class="h-8 w-8 rounded-full" :src="pic" alt="user photo" />
+                <img class="h-8 w-8 rounded-full" :src="Comment?.author.avatar.url" alt="user photo" />
             </div>
             <!-- comment -->
            <div class="pl-2  flex-1 items-start">
-             <router-link to="/profile" class="text-base  md:text-base tracking-normal font-thin mb-2">Username</router-link>
-             <p class="text-sm">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Atque molestiae magnam voluptate minus maxime, veniam assumenda nobis sapiente ipsum cumque.</p>
+             <router-link :to="`/@${Comment?.author.username}`" class="text-base  md:text-base tracking-normal font-thin mb-2">{{ Comment?.author.username }}</router-link>
+             <p class="text-sm">{{ Comment?.comment }}</p>
              
               <!-- icons -->
               <div class="mt-1 ">
@@ -42,4 +42,9 @@
 
 <script setup>
   import pic from '../../assets/tshirt.jpg'
+
+  const props =defineProps({
+     Comment:Object
+  })
+
 </script>

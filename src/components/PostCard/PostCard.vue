@@ -1,15 +1,15 @@
 <template>
-     <div class="relative bg-dark-300 px-2 mb-14 md:mb-0 py-2 ">
+     <div class="relative bg-dark-300 px-2 mb-2 md:mb-0 py-2 ">
 
         <div  class="relative md:border-b-2 md:border-light-100 pb-3">
 
             <!-- card header -->
             <div class="flex items-center justify-between py-2 ">
                 <div class="flex items-center gap-x-2">
-                    <img class="w-10 h-10 rounded-full" :src="Thread.author.avatar.url" alt="user photo" />
+                    <img class="w-10 h-10 rounded-full" :src="User?.avatar.url" alt="user photo" />
 
                     <div class="flex flex-col">
-                        <router-link :to="`@${Thread.author.username}`" class="text-base md:text-base tracking-normal font-thin">{{ Thread.author.username }}</router-link>
+                        <router-link :to="`@${User?.username}`" class="border-transparent text-gray-200 text-base md:text-base tracking-normal font-thin">{{ User.username }}</router-link>
                         <time class="text-xs font-normal text-gray-400">2 hours ago</time>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                     <!-- icons -->
 
                     <div class="flex items-center gap-4 mb-4 md:mb-2">
-                        <p class="text-sm text-gray-200  hover:text-gray-300">1 reply</p>
+                        <p class="text-sm text-gray-200  hover:text-gray-300">{{ Thread?.comments.length }} reply</p>
                         <p class="text-sm text-gray-200  hover:text-gray-300">0 likes</p>
                     </div>
                 </div>
@@ -93,6 +93,8 @@ import tshirt from '../../assets/tshirt.jpg'
 
 // prop of object
 defineProps({
-  Thread: Object
+  Thread: Object,
+  User:Object
 })
+
 </script>

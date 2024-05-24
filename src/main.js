@@ -28,7 +28,9 @@ import {
     FcGoogle,
     MdEmailRound,
     BiEye,
-    MdAddaphotoOutlined 
+    MdAddaphotoOutlined,
+    SiGhostery,
+    BiSearch
  } 
 
 from "oh-vue-icons/icons";
@@ -57,7 +59,9 @@ addIcons(RiSearchEyeLine,
     FcGoogle,
     MdEmailRound,
     BiEye,
-    MdAddaphotoOutlined 
+    MdAddaphotoOutlined,
+    SiGhostery,
+    BiSearch
     );
 
 

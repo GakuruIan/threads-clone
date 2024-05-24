@@ -6,7 +6,7 @@
          <!-- logo -->
           <div class="">
             <!-- !! remove this link -->
-            <router-link to="/login" >
+            <router-link to="/" >
               <img :src="logo" alt="logo" class="h-10 w-10 object-fit">
             </router-link>
           </div>
@@ -23,7 +23,9 @@
                     <v-icon name="md-addaphoto-outlined" scale="1.1"/>
                  </router-link>
 
-                 <v-icon name="ri-search-eye-line" scale="1.2" class="hover:cursor-pointer"/>
+                 <router-link to="/search" >
+                   <v-icon name="ri-search-eye-line" scale="1.2" class="hover:cursor-pointer"/>
+                 </router-link>
 
                  <v-icon name="ri-notification-4-line" scale="1.2" class="hover:cursor-pointer" />
                  

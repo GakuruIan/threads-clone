@@ -47,16 +47,21 @@
     </div>
     <!-- postbar -->
 
-    <template v-for="thread in Threads" :key="thread._id">
-      <PostCard :Thread="thread"/>
-    </template>
+    <div class="" v-if="loading">
+       <Pulse :count="4"/>
+    </div>
+
+    <div class="" v-else>
+      <template v-for="thread in Threads" :key="thread._id">
+        <PostCard :Thread="thread" :User="thread.author"/>
+      </template>
+    </div>
 
 </template>
 
 <script setup>
-import Button from '../../components/Button/Button.vue';
-
 import PostCard from '../../components/PostCard/PostCard.vue'
+import Pulse from '../../components/Loader/Pulse.vue';
 
 // toast
 import { toast } from "vue3-toastify";
@@ -71,15 +76,17 @@ import { ref,onMounted } from 'vue';
 
 const store = useStore()
 const user = ref(null)
+const loading = ref(false)
 
 let Threads= ref([])
 
 const FetchThreads =()=>{
   // add authorization token {bearer token}
    BaseUrl.get('/threads').then((response)=>{
+        // loading.value=true
        if(response.status==200 & response.statusText == 'OK'){
           Threads.value = response.data
-          console.log(response.data)
+          // loading.value=false
        }
    }).catch((err)=>{
        console.log(err)
@@ -88,7 +95,6 @@ const FetchThreads =()=>{
 
 onMounted(()=>{{
   user.value = store.getters.user
-
   FetchThreads()
 }})
 
