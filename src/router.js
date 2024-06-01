@@ -13,11 +13,13 @@ import UserThreads from './components/SubComponents/UserThreads.vue'
 import UserReplies from './components/SubComponents/UserReplies.vue'
 import UserMentions from './components/SubComponents/UserMentions.vue'
 import Search from './Pages/Search/Search.vue'
+import Recovery from './Pages/Auth/Recovery.vue'
 
 const routes = [
     {path:'/login',component:Login},
     {path:'/register',component:Register},
     {path:'/email-password',component:EmailPassword},
+    {path:'/forgot-password',component:Recovery},
     {
         path:'/',
         component:Main,

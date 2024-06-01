@@ -42,11 +42,18 @@
 
         <!-- buttons -->
         <div class="flex gap-x-4">
-            <button class="w-full px-2 py-2  bg-white hover:bg-white/95 font-semibold text-gray-700  rounded-sm">
-                Follow
-             </button>
+            <div class="flex-1 w-full">
+              <button v-if="user?._id !== currentUserID" class="w-full px-2 py-2  bg-white hover:bg-white/95 font-semibold text-gray-700  rounded-sm">
+                  Follow
+              </button>
 
-             <button class="w-full px-2 py-2 rounded-sm tracking-wide bg-none border border-white text-white transition-all duration-75 hover:bg-white hover:text-gray-700 hover:font-semibold">
+              <button v-else class="w-full px-2 py-2  bg-white hover:bg-white/95 font-semibold text-gray-700  rounded-sm">
+                 Edit Profile
+              </button>
+
+            </div>
+
+             <button class="flex-1 w-full px-2 py-2 rounded-sm tracking-wide bg-none border border-white text-white transition-all duration-75 hover:bg-white hover:text-gray-700 hover:font-semibold">
                Mention
             </button>
           </div>
@@ -113,7 +120,9 @@ const store = useStore()
 
 const router =useRouter()
 
-const token = store.getters.user.accessToken
+const {accessToken,_id} = store.getters.user
+
+let currentUserID = _id
 
 
 const props=defineProps({
@@ -124,12 +133,13 @@ const GetUser=(username)=>{
     BaseUrl(`/user/${username}`,
       {
         headers:{
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${accessToken}`
         }
       }
     ).then((response)=>{
       if(response.status === 200 & response.statusText == 'OK'){
         user.value =response.data
+
       }
 
     })
@@ -150,9 +160,8 @@ const GetUser=(username)=>{
 
 onMounted(()=>{
     GetUser(props.username)
+    
 })
 
 
 </script>
-
-<!-- !!  comments for comments, search -->

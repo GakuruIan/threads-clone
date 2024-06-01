@@ -73,6 +73,7 @@ import {onMounted, ref} from 'vue'
 // vuex
 import { useStore } from 'vuex';
 import { useRouter} from 'vue-router';
+import { BaseUrl } from '../../config/Axios';
 
 let isOpen = ref(false)
 let User = ref(null)
@@ -98,10 +99,23 @@ const handleOpenMenu=()=>{
 }
 
 const handleLogout=()=>{
-   const User =store.getters.user
-   store.dispatch('clearUser',User)
+   
+   BaseUrl.post('/logout')
+    .then((response)=>{
+       if(response.status === 200){
+        const User =store.getters.user
+        store.dispatch('clearUser',User)
 
-   router.push('/login')
+        router.push('/login')
+       }
+    })
+    .catch((err)=>{
+       const {response} = err
+       console.log(response.data.message)
+    })
+ 
+   
+  
 }
 
 </script>

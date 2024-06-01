@@ -44,27 +44,27 @@
 
     <div class="bg-dark-300 w-full py-2 rounded-sm" v-else>
 
-        <div class="h-96 w-full flex items-center justify-center" v-if="!isEmpty">
-                Search results will appear here.
+        <div class="h-full w-full " v-if="!isEmpty">
+
+                <div class="py-2  px-2" v-for="user in Users" :key="user._id">
+                    <div class="flex items-center justify-between py-2 ">
+                            <div class="flex items-center gap-x-2">
+                                <img class="w-10 h-10 rounded-full" :src="user?.avatar.url" alt="user photo" />
+            
+                                <div class="flex flex-col">
+                                    <router-link :to="`@${user?.username}`" class="border-transparent text-gray-200 text-base md:text-base tracking-normal font-thin">{{ user.username }}</router-link>
+                                </div>
+                            </div>
+                        <button class="px-4 py-1 rounded-md tracking-wide bg-none border border-white text-white transition-all duration-75 hover:bg-white hover:text-gray-700 hover:font-semibold">Follow</button>
+                    </div> 
+               </div>
+  
         </div>
 
         <div class="h-96 w-full flex items-center justify-center" v-else>
             No user found
         </div>
 
-        <div class="py-2" v-for="user in Users" :key="user._id">
-            <div class="flex items-center justify-between py-2 ">
-                    <div class="flex items-center gap-x-2">
-                        <img class="w-10 h-10 rounded-full" :src="user?.avatar.url" alt="user photo" />
-    
-                        <div class="flex flex-col">
-                            <router-link :to="`@${user?.username}`" class="border-transparent text-gray-200 text-base md:text-base tracking-normal font-thin">{{ user.username }}</router-link>
-                            <span class="text-xs font-normal text-gray-400">2 hours ago</span>
-                        </div>
-                    </div>
-                  <button class="px-4 py-1 rounded-md tracking-wide bg-none border border-white text-white transition-all duration-75 hover:bg-white hover:text-gray-700 hover:font-semibold">Follow</button>
-             </div> 
-        </div>
     </div>
 </template>
 
@@ -102,6 +102,7 @@ const handleSubmit=async(FormData,form$)=>{
             if(response.data.length === 0){
                 isEmpty.value = true
                 loading.value=  false
+                
             }
             else{
                 isEmpty.value= false
@@ -112,6 +113,9 @@ const handleSubmit=async(FormData,form$)=>{
     })
     .catch((err)=>{
         console.log(err)
+    })
+    .finally(()=>{
+        form$.reset()
     })
 }
 </script>

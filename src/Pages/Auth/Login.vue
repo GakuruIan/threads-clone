@@ -45,7 +45,7 @@
 
              
              <StaticElement name="static" add-class="flex items-center justify-end w-full">  
-               <router-link to="/register" class="group">
+               <router-link to="/forgot-password" class="group">
                   <p class="text-sm text-gray-400 group-hover:text-gray-300">Forgot password</p>
                 </router-link>
             </StaticElement>

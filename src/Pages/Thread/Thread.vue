@@ -14,11 +14,16 @@
                    <img class="w-10 h-10 rounded-full" :src="Thread?.author.avatar.url" alt="user photo" />
 
                    <div class="flex flex-col">
-                       <router-link to="/profile" class="text-base md:text-base tracking-normal font-thin">{{ Thread?.author.username }}</router-link>
+                       <router-link :to="`/@${Thread?.author.username}`" class="text-base md:text-base tracking-normal font-thin">{{ Thread?.author.username }}</router-link>
                        <time class="text-xs font-normal text-gray-400">2 hours ago</time>
                    </div>
                </div>
-             <button class="px-4 py-1 rounded-md tracking-wide bg-none border border-white text-white transition-all duration-75 hover:bg-white hover:text-gray-700 hover:font-semibold">Follow</button>
+
+             <div>
+                 <button v-if="!isFollowing" @click="handleFollow" class="w-28 px-4 py-1 rounded-md tracking-wide bg-none border border-white text-white transition-all duration-75 hover:bg-white hover:text-gray-700 hover:font-semibold">Follow</button>
+
+                 <button v-else @click="handleUnFollow" class="w-28 px-4 py-1 rounded-md font-semibold  bg-white text-gray-700  transition-all duration-75 hover:bg-white/100 hover:text-gray-800 hover:font-semibold">Unfollow</button>
+             </div>
            </div> 
            <!-- card header -->
 
@@ -28,8 +33,6 @@
                 
                    <p v-if="Thread?.caption" class="mb-3 text-sm"> {{ Thread?.caption }}</p>
 
-                   <!-- image -->
-                   <!-- <img :src="tshirt" alt="photo" class="h-80 md:h-96 w-96 object-fit"> -->
 
                    <div v-if="Thread?.photos.length > 0">
                             <!-- if there is more than two images -->
@@ -142,6 +145,9 @@ const hasErrors = ref(false)
 const loading = ref(false)
 const error=ref('')
 const Thread = ref(null)
+
+const isFollowing = ref(false)
+
 const fetching = ref(true)
 
 const Id = route.params.id
@@ -155,12 +161,18 @@ const {accessToken,_id} = store.getters.user
 onMounted(()=>{
 
   fetching.value=true
-   BaseUrl(`/thread/${Id}`)
+   BaseUrl(`/thread/${Id}`,
+   {
+     headers:{
+        'Authorization': `Bearer ${accessToken}`
+     }
+   }
+   )
    .then((response)=>{
       if(response.status === 200){
-        Thread.value = response.data
+        Thread.value = response.data.post
+        isFollowing.value = response.data.isFollowing
         fetching.value=false
-        console.log(response.data)
       }
    })
    .catch((err)=>{
@@ -224,5 +236,87 @@ const handleSubmit=()=>{
         })
     })
 
+}
+
+
+const handleFollow=async()=>{
+   
+    BaseUrl.post('/follow',{
+        theOnebeingFollowed:Thread.value.author._id
+    },
+     {
+        headers:{
+            'Authorization': `Bearer ${accessToken}`
+        }
+     }
+    ).then((response)=>{
+        if(response.status === 200){
+            toast.info(`You started following ${Thread.value.author.username}`,
+             {
+                position:toast.POSITION.BOTTOM_RIGHT,
+                transition: toast.TRANSITIONS.SLIDE,
+                theme:'colored',
+                hideProgressBar:true,
+                autoClose:2000,
+             }
+            )
+        }
+    }).catch((err)=>{
+        const {response} = err
+
+        if(response.status=== 500){
+            toast.warn("An error occurred. Try again later",
+             {
+                position:toast.POSITION.BOTTOM_RIGHT,
+                transition: toast.TRANSITIONS.SLIDE,
+                theme:'colored',
+                hideProgressBar:true,
+                autoClose:2000
+             }
+            )
+        }
+        console.log(err)
+    })
+
+}
+
+const handleUnFollow=()=>{
+    BaseUrl.post('/unfollow',{
+        theOnebeingUnFollowed:Thread.value.author._id
+    },
+     {
+        headers:{
+            'Authorization':`Bearer ${accessToken}`
+        }
+     }
+    ).then((response)=>{
+        if(response.status === 200){
+            toast.info(`You have unfollowed ${Thread.value.author.username}`,
+             {
+                position:toast.POSITION.BOTTOM_RIGHT,
+                transition: toast.TRANSITIONS.SLIDE,
+                theme:'colored',
+                hideProgressBar:true,
+                autoClose:2000
+             }
+            )
+        }
+    })
+    .catch((err)=>{
+        const {response} = err
+
+        if(response.status=== 500){
+            toast.warn("An error occurred. Try again later",
+             {
+                position:toast.POSITION.BOTTOM_RIGHT,
+                transition: toast.TRANSITIONS.SLIDE,
+                theme:'colored',
+                hideProgressBar:true,
+                autoClose:2000
+             }
+            )
+        }
+        console.log(err)
+    })
 }
 </script>
