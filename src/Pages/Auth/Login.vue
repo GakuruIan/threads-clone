@@ -23,23 +23,25 @@
              method="POST"
            >
              <TextElement name="username" size="lg" label="Username" placeholder="Enter username" 
-                :add-class="{input: 'bg-light-200 '}" 
+
                 :override-class="{
-                    container:'my-2',
-                    inputContainer: 'border w-full transition-all',
-                    inputContainer_default: 'border-light-200',
-                    inputContainer_focused: 'border-gray-300/20',
-                    inputContainer_md: 'h-12',
+                        input:'border border-gray-100/20 w-full bg-dark-400 py-4 rounded-sm placeholder-gray-400',
+                        container:'my-2',
+                        inputContainer: 'border w-full transition-all',
+                        inputContainer_default: 'border-gray-100/20',
+                        inputContainer_focused: 'bg-dark-600 border-gray-200/20',
+                        inputContainer_md: 'h-12',
                     }"
              />
              <TextElement name="password" type="text" inputType='password' size="lg" label="Password" placeholder="Password" 
-                :add-class="{input: 'bg-light-200 '}" 
-                :override-class="{
-                    container:'my-2',
-                    inputContainer: 'border w-full transition-all',
-                    inputContainer_default: 'border-light-200',
-                    inputContainer_focused: 'border-gray-300/20',
-                    inputContainer_md: 'h-12',
+                
+                  :override-class="{
+                      input:'border border-gray-100/20 w-full bg-dark-400 py-4 rounded-sm placeholder-gray-400',
+                      container:'my-2',
+                      inputContainer: 'border w-full transition-all',
+                      inputContainer_default: 'border-gray-100/20',
+                      inputContainer_focused: 'bg-dark-600 border-gray-200/20',
+                      inputContainer_md: 'h-12',
                     }"
              />
 
@@ -48,7 +50,7 @@
                <router-link to="/forgot-password" class="group">
                   <p class="text-sm text-gray-400 group-hover:text-gray-300">Forgot password</p>
                 </router-link>
-            </StaticElement>
+             </StaticElement>
            
 
              <ButtonElement name="button" 

@@ -34,64 +34,69 @@
 
                         <FormElements>
                             <TextElement name="email" :debounce=1000 size="lg" label="Email" placeholder="Enter username" 
-                                :add-class="{input: 'bg-light-200 ',inputContainer:'bg-red-200'}" 
+                               
                                 :override-class="{
+                                    input:'border border-gray-100/20 w-full bg-dark-400 py-4 rounded-sm placeholder-gray-400',
                                     container:'my-2',
                                     inputContainer: 'border w-full transition-all',
-                                    inputContainer_default: 'border-gray-200/50',
-                                    inputContainer_focused: 'border-gray-300/20',
+                                    inputContainer_default: 'border-gray-100/20',
+                                    inputContainer_focused: 'bg-dark-600 border-gray-200/20',
                                     inputContainer_md: 'h-12',
                                     }"
                                 :rules="['required','email']"
                              />
 
                              <TextElement name="password" type="text" inputType='password' size="lg" label="Password" placeholder="Create Password" 
-                                :add-class="{input: 'bg-light-200 '}" 
+                    
                                 :override-class="{
+                                    input:'border border-gray-100/20 w-full bg-dark-400 py-4 rounded-sm placeholder-gray-400',
                                     container:'my-2',
                                     inputContainer: 'border w-full transition-all',
-                                    inputContainer_default: 'border-gray-200/50',
-                                    inputContainer_focused: 'border-gray-300/20',
+                                    inputContainer_default: 'border-gray-100/20',
+                                    inputContainer_focused: 'bg-dark-600 border-gray-200/20',
                                     inputContainer_md: 'h-12',
-                                    }" 
-                                    rules="required|confirmed"
+                                    }"
                              />
 
 
                              <TextElement name="password_confirmation" :submit="false" type="text" inputType='password' size="lg" label="Confirm Password" placeholder="confirm Password" 
-                                    :add-class="{input: 'bg-light-200'}" 
-                                    :override-class="{
-                                        container:'my-2',
-                                        inputContainer: 'border w-full transition-all',
-                                        inputContainer_default: 'border-gray-200/50',
-                                        inputContainer_focused: 'border-gray-300/20',
-                                        inputContainer_md: 'h-12',
-                                        }"
+                                  
+                               :override-class="{
+                                    input:'border border-gray-100/20 w-full bg-dark-400 py-4 rounded-sm placeholder-gray-400',
+                                    container:'my-2',
+                                    inputContainer: 'border w-full transition-all',
+                                    inputContainer_default: 'border-gray-100/20',
+                                    inputContainer_focused: 'bg-dark-600 border-gray-200/20',
+                                    inputContainer_md: 'h-12',
+                                }"
                                     rules="required"
                              />
 
 
                              <TextElement name="username" size="lg" label="Username" placeholder="Enter username" 
-                                    :add-class="{input: 'bg-light-200 '}" 
-                                    :override-class="{
-                                        container:'my-2',
-                                        inputContainer: 'border w-full transition-all',
-                                        inputContainer_default: 'border-gray-200/50',
-                                        inputContainer_focused: 'border-gray-300/20',
-                                        inputContainer_md: 'h-12',
-                                        }"
+                                   
+                                :override-class="{
+                                    input:'border border-gray-100/20 w-full bg-dark-400 py-4 rounded-sm placeholder-gray-400',
+                                    container:'my-2',
+                                    inputContainer: 'border w-full transition-all',
+                                    inputContainer_default: 'border-gray-100/20',
+                                    inputContainer_focused: 'bg-dark-600 border-gray-200/20',
+                                    inputContainer_md: 'h-12',
+                                    }"
                                          rules="required|max:20"
                              />
 
                                 
                                 <TextareaElement name="bio" :rows=5 label="Bio" placeholder="create Bio"
-                                    :add-class="{input: 'bg-light-200 '}" 
-                                    :override-class="{
-                                        container:'my-2',
-                                        inputContainer: 'border w-full transition-all',
-                                        inputContainer_default: 'border-gray-200/50',
-                                        inputContainer_focused: 'border-gray-300/20',
-                                        }"
+                                   
+                                 :override-class="{
+                                    input:'border border-gray-100/20 border-gray-100/20 w-full bg-dark-400  rounded-sm placeholder-gray-400',
+                                    container:'my-2',
+                                    inputContainer: '  border w-full transition-all',
+                                    inputContainer_default: 'border border-gray-100/20',
+                                    inputContainer_focused: 'border-gray-200/20',
+                                    
+                                    }"
                                         rules="required|max:256"
                                 />
 

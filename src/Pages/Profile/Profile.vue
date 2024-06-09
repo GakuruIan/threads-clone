@@ -1,5 +1,6 @@
 <template>
   <div class="relative bg-dark-300 px-2 mb-14 md:mb-0 py-2 ">
+
      <div class="">
         <div class="flex items-center justify-between w-full mb-4">
           <div class="">
@@ -43,13 +44,22 @@
         <!-- buttons -->
         <div class="flex gap-x-4">
             <div class="flex-1 w-full">
-              <button v-if="user?._id !== currentUserID" class="w-full px-2 py-2  bg-white hover:bg-white/95 font-semibold text-gray-700  rounded-sm">
-                  Follow
-              </button>
+              <div class="w-full" v-if="user?._id === currentUserID">
+                  <button @click="router.push(`/@${username}/settings`)"  class="w-full flex-1 px-2 py-2  bg-white hover:bg-white/95 font-semibold text-gray-700  rounded-sm">
+                    Edit Profile
+                  </button>
+              </div>
 
-              <button v-else class="w-full px-2 py-2  bg-white hover:bg-white/95 font-semibold text-gray-700  rounded-sm">
-                 Edit Profile
-              </button>
+              <div class="" v-else>
+                <!-- if the user is following the user show unfollow button -->
+                <button v-if="true" class="w-full px-2 py-2  bg-white hover:bg-white/95 font-semibold text-gray-700  rounded-sm">
+                  Follow
+                 </button>
+
+                 <button v-else class="w-full px-2 py-2  bg-white hover:bg-white/95 font-semibold text-gray-700  rounded-sm">
+                   UnFollow
+                 </button>
+              </div>
 
             </div>
 
@@ -74,6 +84,9 @@
                 </li>
                 <li class="me-2 flex-1">
                     <router-link :to="`/@${username}/mentions`" class="inline-block p-4  rounded-t-lg  hover:border-gray-300 hover:text-gray-300">Mentions</router-link>
+                </li>
+                <li class="me-2 flex-1">
+                    <router-link :to="`/@${username}/settings`" class="inline-block p-4  rounded-t-lg  hover:border-gray-300 hover:text-gray-300">Settings</router-link>
                 </li>
 
             </ul>
@@ -116,6 +129,7 @@ import "vue3-toastify/dist/index.css";
 import PostCard from '../../components/PostCard/PostCard.vue'
 
 let user = ref(null)
+let openModal = ref(null)
 const store = useStore()
 
 const router =useRouter()
@@ -139,7 +153,6 @@ const GetUser=(username)=>{
     ).then((response)=>{
       if(response.status === 200 & response.statusText == 'OK'){
         user.value =response.data
-
       }
 
     })
@@ -162,6 +175,11 @@ onMounted(()=>{
     GetUser(props.username)
     
 })
+
+
+const handleModal=(state)=>{
+   openModal.value = state
+}
 
 
 </script>

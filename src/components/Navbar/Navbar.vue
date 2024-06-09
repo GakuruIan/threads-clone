@@ -47,10 +47,10 @@
                           </div>
                           <ul class="py-2" aria-labelledby="user-menu-button">
                             <li>
-                              <a href="#" class="block px-4 py-2 text-sm hover:bg-light-100 hover:text-white">Profile</a>
+                              <router-link :to="`/@${User?.username}`" class="block px-4 py-2 text-sm hover:bg-light-100 hover:text-white">Profile</router-link>
                             </li>
                             <li>
-                              <a href="#" class="block px-4 py-2 text-sm hover:bg-light-100 hover:text-white">Settings</a>
+                              <router-link :to="`/@${User?.username}/settings`" class="block px-4 py-2 text-sm hover:bg-light-100 hover:text-white">Settings</router-link>
                             </li>
                             <li @click="handleLogout">
                               <a href="#" class="block px-4 py-2 text-sm hover:bg-light-100 hover:text-white">Sign out</a>
@@ -83,8 +83,6 @@ const router = useRouter()
 
 onMounted(()=>{
    User.value = store.getters.user
-
-   
 })
 
 const handleOpenMenu=()=>{

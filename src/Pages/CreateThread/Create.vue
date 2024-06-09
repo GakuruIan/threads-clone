@@ -103,9 +103,10 @@ const handleSubmit=async(FormDat,form$)=>{
      
     formData.append('caption', requestData.caption);
     formData.append('author',user.value._id)
+    formData.append('username',user.value.username)
  
 
-     response= await BaseUrl.post(
+    response= await BaseUrl.post(
       '/create/thread',
       formData,
       {

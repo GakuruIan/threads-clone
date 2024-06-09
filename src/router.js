@@ -14,6 +14,7 @@ import UserReplies from './components/SubComponents/UserReplies.vue'
 import UserMentions from './components/SubComponents/UserMentions.vue'
 import Search from './Pages/Search/Search.vue'
 import Recovery from './Pages/Auth/Recovery.vue'
+import Settings from './components/SubComponents/Settings.vue'
 
 const routes = [
     {path:'/login',component:Login},
@@ -54,6 +55,12 @@ const routes = [
                         path: 'mentions',
                         components: {
                           subcontent: UserMentions
+                        }
+                    },
+                    {
+                        path: 'settings',
+                        components: {
+                          subcontent: Settings
                         }
                     }
                   ]
