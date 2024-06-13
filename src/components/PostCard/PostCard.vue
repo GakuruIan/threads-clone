@@ -4,14 +4,49 @@
         <div  class="relative md:border-b-2 md:border-light-100 pb-3">
 
             <!-- card header -->
-            <div class="flex items-center justify-between py-2 ">
+            <div class="relative flex items-center justify-between py-2 ">
                 <div class="flex items-center gap-x-2">
                     <img class="w-10 h-10 rounded-full" :src="User?.avatar.url" alt="user photo" />
 
                     <div class="flex flex-col">
                         <router-link :to="`@${User?.username}`" class="border-transparent text-gray-200 text-base md:text-base tracking-normal font-thin">{{ User.username }}</router-link>
-                        <time class="text-xs font-normal text-gray-400">2 hours ago</time>
+                        <time class="text-xs font-normal text-gray-400">{{ ShowTime(Thread?.createdAt) }}</time>
                     </div>
+                </div>
+
+                <div class="flex items-center gap-x-2">
+                    
+                    <button class="group" @click="handleDropdown(true)">
+                        <v-icon name="ri-more-2-fill" class="h-5 w-5 group-hover:cursor-pointer"/>
+                    </button>
+                    
+                    <!-- dropdown -->
+                    <div id="dropdownDotsHorizontal" 
+                      class="absolute top-12 right-0 z-10 rounded-lg shadow w-44 bg-dark-600 "
+                      :class="[ OpenDropdown ? '' : 'hidden']"
+                    >
+                        <button class="absolute right-2" @click="handleDropdown(false)">
+                            <v-icon name="io-close" class="h-4 w-4 hover:cursor-pointer "/>
+                        </button>
+
+                        <ul class="py-2 text-sm mt-4 text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconHorizontalButton">
+                        
+                            <li>
+                                <a href="#" class="block px-4 py-2 hover:bg-light-100 dark:hover:text-white">Report</a>
+                            </li>
+                            <li>
+                                <a href="#" class="block px-4 py-2 hover:bg-light-100 dark:hover:text-white">Share</a>
+                            </li>
+
+                            <li v-if="User?._id === user?._id">
+                              <button @click="handleDelete(Thread?._id)" class="w-full py-2 px-4 flex items-center gap-x-2 group text-sm hover:text-red-500 hover:bg-light-100">
+                                Delete
+                               </button>
+                            </li>
+                        </ul>
+                    </div>
+                     <!-- dropdown -->
+
                 </div>
             
             </div> 
@@ -47,10 +82,16 @@
                     <div class="mt-1 ">
 
                      <div class="flex items-center gap-1 py-2">
+                         <div class="">
+                            <button v-if="!Thread?.isLikedByCurrentUser" @click="handleLike(Thread._id)" class="flex items-center justify-center h-8 w-8 rounded-full transition-all duration-75 hover:cursor-pointer hover:bg-light-100">
+                               <v-icon name="bi-heart" class="h-5 w-5"/>
+                            </button>
+                            
+                            <button v-else @click="handleUnLike(Thread._id)" class="flex items-center justify-center h-8 w-8 rounded-full transition-all duration-75 hover:cursor-pointer hover:bg-light-100">
+                               <v-icon name="bi-heart-fill" class="h-5 w-5 text-red-600"/>
+                            </button>
+                        </div>
 
-                         <button @click="handleLike(Thread._id)" class="flex items-center justify-center h-8 w-8 rounded-full transition-all duration-75 hover:cursor-pointer hover:bg-light-100">
-                            <v-icon name="bi-heart" class="h-5 w-5"/>
-                         </button>
 
                         <div class="flex items-center justify-center h-8 w-8 rounded-full transition-all duration-75 hover:cursor-pointer hover:bg-light-100">
                             <v-icon name="co-comment-bubble" class="h-5 w-5"/>
@@ -89,7 +130,7 @@
 </template>
 
 <script setup>
-import { ref,onMounted } from 'vue';
+import { ref,onMounted,computed } from 'vue';
 import tshirt from '../../assets/tshirt.jpg'
 
 // toast
@@ -104,27 +145,54 @@ import { BaseUrl } from '../../config/Axios';
 
 
 // prop of object
-defineProps({
+const props=defineProps({
   Thread: Object,
   User:Object  // owner of the post
 })
 
+
 let user = ref(null)
+let OpenDropdown = ref(false)
 const store = useStore()
 
 onMounted(()=>{
    user.value = store.getters.user
 })
 
+const ShowTime = (timestamp)=>{
+   
+  const now = new Date();
+  const date = new Date(timestamp);
+
+  const diff = now.getTime() - date.getTime();
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 5) {
+    const options = { day: 'numeric', month: 'short' };
+    return date.toLocaleDateString('en-US', options);
+  } else if (hours >= 24) {
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  } else if (minutes >= 60) {
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+  } else if (seconds >= 60) {
+    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+  } else {
+    return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
+  }
+}
+
+
 const handleLike = async(threadID)=>{
    try {
-    const result = await BaseUrl.post(`/like/${threadID}`,{user:user.value._id},{
+    const result = await BaseUrl.post(`/like/${threadID}`,{},{
          headers:{
             'Authorization' : `Bearer ${user.value.accessToken}`
          }
       })
 
-      console.log(result)
    } catch (error) {
     const {response} = error
 
@@ -139,6 +207,86 @@ const handleLike = async(threadID)=>{
 
       console.log(error)
    }
+}
+
+const handleUnLike = async(threadID)=>{
+   try {
+    const result = await BaseUrl.post(`/unlike/${threadID}`,{},
+    {
+        headers:{
+            'Authorization' : `Bearer ${user.value.accessToken}`
+         }
+    }
+    )
+
+   } catch (error) {
+    const {response} = error
+
+    if(response.status === 500){
+          toast.error("Something went wrong",{
+          type:'error',
+          theme:'colored',
+          autoClose:2000,
+          hideProgressBar:true
+        })
+       }
+
+      console.log(error)
+   }
+}
+
+const handleDropdown=(state)=>{
+    OpenDropdown.value = state
+}
+
+const handleDelete=async(id)=>{
+    let toastId 
+    
+    toastId = toast.loading('Deleting Post',{
+        position:toast.POSITION.TOP_CENTER,
+        type:'info',
+        theme:'colored',
+        autoClose:1500,
+        hideProgressBar:true
+    })
+
+  try {
+    let response = await BaseUrl.delete(`/delete/${id}`,{
+      headers:{
+        Authorization: `Bearer ${user.value.accessToken}`
+      }
+    })
+   
+    if(response.status === 200){
+        toast.update(toastId,{
+            render:"Post deleted successfully",
+            type:'success',
+            theme:'colored',
+            autoClose:1500,
+            hideProgressBar:true
+        })
+    }
+    
+  } catch (error) {
+    const {response} = error
+
+    if(response.status === 500){
+          toast.error("Something went wrong",{
+          type:'error',
+          theme:'colored',
+          autoClose:1500,
+          hideProgressBar:true
+        })
+       }
+
+      console.log(error)
+  }
+  finally{
+    setTimeout(()=>{
+      toast.remove(toastId)
+    },3000)
+    OpenDropdown.value = false
+  }
 }
 
 

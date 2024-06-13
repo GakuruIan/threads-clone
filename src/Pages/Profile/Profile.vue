@@ -104,8 +104,6 @@
 
      <!-- post card -->
 
-     <!-- !!split post card into author and post object -->
-
      <!-- <template v-for="thread in user?.posts" :key="thread._id">
       <PostCard :Thread="thread"/>
     </template> -->
@@ -126,10 +124,7 @@ import { BaseUrl } from '../../config/Axios';
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 
-import PostCard from '../../components/PostCard/PostCard.vue'
-
 let user = ref(null)
-let openModal = ref(null)
 const store = useStore()
 
 const router =useRouter()
@@ -176,10 +171,6 @@ onMounted(()=>{
     
 })
 
-
-const handleModal=(state)=>{
-   openModal.value = state
-}
 
 
 </script>

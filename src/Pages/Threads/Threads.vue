@@ -1,4 +1,5 @@
 <template>
+  <div>
     <!-- post bar -->
     <div class="bg-dark-300 py-2 rounded-sm mb-4">
         <div class="px-4">
@@ -51,12 +52,14 @@
        <Pulse :count="4"/>
     </div>
 
-    <div class="" v-else>
+    <div class="" v-else >
       <template v-for="thread in Threads" :key="thread._id">
         <PostCard :Thread="thread" :User="thread.author"/>
       </template>
+      <div class="" ref="observerRef" id="observer"></div>
     </div>
 
+  </div>
 </template>
 
 <script setup>
@@ -72,31 +75,69 @@ import { BaseUrl } from '../../config/Axios';
 
 // vuex
 import { useStore } from 'vuex';
-import { ref,onMounted } from 'vue';
+import { ref,onMounted,onUnmounted } from 'vue';
 
 const store = useStore()
 const user = ref(null)
+const lastScrollTop = ref(0);
+const observerRef = ref(null);
+const pages = ref(1);
+const totalPages = ref(0)
 const loading = ref(false)
-
 let Threads= ref([])
+
+const limit=15
 
 const FetchThreads =()=>{
   // add authorization token {bearer token}
-   BaseUrl.get('/threads').then((response)=>{
-        // loading.value=true
+   BaseUrl.get('/threads',{
+    params:{
+      page:pages.value,
+      limit:limit
+    },
+    headers:{
+      Authorization :`Bearer ${user.value.accessToken}`
+    }
+   }).then((response)=>{
+       loading.value=true
        if(response.status==200 & response.statusText == 'OK'){
-          Threads.value = response.data
-          // loading.value=false
+           
+        if(totalPages.value && pages.value > totalPages.value) return;
+
+          Threads.value = [...Threads.value,...response.data.posts]
+          totalPages.value = response.data.totalPages
+
+          pages.value += 1
        }
    }).catch((err)=>{
        console.log(err)
    })
+   .finally(()=>{
+     loading.value=false
+   })
+}
+
+const handleScroll=()=>{
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const isScrollingDown = scrollTop > lastScrollTop.value;
+      lastScrollTop.value = scrollTop;
+
+      if (isScrollingDown && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && !loading.value) {
+       FetchThreads();
+      }
 }
 
 onMounted(()=>{{
   user.value = store.getters.user
+
+  window.addEventListener('scroll',handleScroll)
   FetchThreads()
 }})
+
+onUnmounted(() => {
+window.removeEventListener('scroll',handleScroll)
+});
+
 
 const handleSubmit=async(formData,form$)=>{
     const requestData = form$.requestData
@@ -158,6 +199,8 @@ const handleSubmit=async(formData,form$)=>{
     form$.reset()
   }
 }
+
+
 
 </script>
 

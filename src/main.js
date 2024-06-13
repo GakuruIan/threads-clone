@@ -30,7 +30,9 @@ import {
     BiEye,
     MdAddaphotoOutlined,
     SiGhostery,
-    BiSearch
+    BiSearch,
+    OiTrash,
+    IoClose
  } 
 
 from "oh-vue-icons/icons";
@@ -61,7 +63,9 @@ addIcons(RiSearchEyeLine,
     BiEye,
     MdAddaphotoOutlined,
     SiGhostery,
-    BiSearch
+    BiSearch,
+    OiTrash,
+    IoClose
     );
 
 

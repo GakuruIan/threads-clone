@@ -50,7 +50,6 @@ const FetchUserThreads=()=>{
             isEmpty.value= true 
           }
          data.value= response.data
-        console.log(response.data)
        }
    })
    .catch((err)=>{
