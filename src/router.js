@@ -7,6 +7,7 @@ import Main from './Pages/Main/Main.vue'
 import Threads from './Pages/Threads/Threads.vue'
 import Profile from './Pages/Profile/Profile.vue'
 import Thread from './Pages/Thread/Thread.vue'
+import Notification from './Pages/Notification/Notification.vue'
 import EmailPassword from './Pages/Auth/EmailPassword.vue'
 import Create from './Pages/CreateThread/Create.vue'
 import UserThreads from './components/SubComponents/UserThreads.vue'
@@ -69,6 +70,12 @@ const routes = [
                 path:'create-thread',
                 components:{
                     content:Create
+                }
+            },
+            {
+                path:'nofitications',
+                components:{
+                    content:Notification
                 }
             },
             {

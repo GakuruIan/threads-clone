@@ -90,6 +90,8 @@ import "vue3-toastify/dist/index.css";
 // vuex
 import { useStore } from 'vuex';
 
+
+
 const router = useRouter()
 const store =useStore()
 
@@ -101,6 +103,8 @@ onMounted(()=>{
   if(isLoggedIn){
     router.push('/')
   }
+
+
   
 })
 
@@ -139,6 +143,10 @@ const handleSubmit=async(FormData,form$)=>{
       
       store.dispatch('setUser',response.data)
       store.dispatch('setSuccessLogin',true)
+
+
+     
+      
 
       router.push('/')
     }

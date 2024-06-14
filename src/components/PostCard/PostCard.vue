@@ -94,7 +94,9 @@
 
 
                         <div class="flex items-center justify-center h-8 w-8 rounded-full transition-all duration-75 hover:cursor-pointer hover:bg-light-100">
-                            <v-icon name="co-comment-bubble" class="h-5 w-5"/>
+                            <router-link :to="`/thread/${Thread._id}`">
+                              <v-icon name="co-comment-bubble" class="h-5 w-5"/>
+                            </router-link>
                         </div>
 
                         <div class="flex items-center justify-center h-8 w-8 rounded-full transition-all duration-75 hover:cursor-pointer hover:bg-light-100">
@@ -188,6 +190,7 @@ const ShowTime = (timestamp)=>{
 const handleLike = async(threadID)=>{
    try {
     const result = await BaseUrl.post(`/like/${threadID}`,{},{
+         params:{user:user.value._id},
          headers:{
             'Authorization' : `Bearer ${user.value.accessToken}`
          }

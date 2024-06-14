@@ -17,12 +17,28 @@ import { useRouter } from 'vue-router'
 const store = useStore()
 const router = useRouter()
 
+// socket Io
+import  io  from "socket.io-client";
+
+const socket = io('http://localhost:3000')
+
 onMounted(()=>{
     const isLoggedIn = store.getters.isLoggedIn
+    const userID = store.getters.user._id
 
     if(!isLoggedIn){
       router.push('/login')
     }
+
+  socket.on('connect', () => {
+    console.log('Connected to server'); 
+
+    socket.emit('userConnected',userID);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Disconnected from server');  
+  });
 })
 
 </script>

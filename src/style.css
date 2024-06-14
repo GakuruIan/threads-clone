@@ -26,3 +26,16 @@ h6,p,a{
 .form-bg-input{
   background-color: #282828;
 }
+
+body::-webkit-scrollbar {
+  width: 6px;             
+}
+
+body::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.1);      
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: white;    
+  border-radius: 8px;       
+}

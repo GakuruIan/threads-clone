@@ -27,7 +27,9 @@
                    <v-icon name="ri-search-eye-line" scale="1.2" class="hover:cursor-pointer"/>
                  </router-link>
 
-                 <v-icon name="ri-notification-4-line" scale="1.2" class="hover:cursor-pointer" />
+                 <router-link to="/nofitications">
+                   <v-icon name="ri-notification-4-line" scale="1.2" class="hover:cursor-pointer" />
+                 </router-link>
                  
             </div>
             
