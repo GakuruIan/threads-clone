@@ -170,6 +170,7 @@ onMounted(()=>{
    )
    .then((response)=>{
       if(response.status === 200){
+        console.log(response.data.post)
         Thread.value = response.data.post
         isFollowing.value = response.data.isFollowing
         fetching.value=false
@@ -202,7 +203,8 @@ const handleSubmit=()=>{
 
     BaseUrl.post(`/create/${Thread.value._id}/comment`,{
         comment:comment.value,
-        author:_id
+        author:_id,
+        ownerOfPost:Thread.value.author._id,
     },
      {
         headers:{

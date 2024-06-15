@@ -15,22 +15,49 @@
             
         <div class="" v-if="!isEmpty">
 
-            <div class="py-2 px-2 mb-2 flex items-center justify-between rounded-md hover:cursor-pointer  gap-x-2">
-               <div class="flex items-center gap-x-3 md:gap-x-2">
-                   <img :src="pic" alt="" srcset="" class="h-10 w-10 object-fit rounded-full">
-               
-                   <div class="">
-                       <h4 class="text-base">Username</h4>
-                       <p class="mt-1 text-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, omnis.</p>
-                   </div>
-   
-               </div>
-               <!-- the post -->
-               <div class="">
-                   <img :src="pic" alt="" srcset="" class="h-10 w-10 object-fit rounded-md">
-               </div>
-   
-           </div>
+            <div class="mb-2">
+                <div class="" v-for="Notifications in AllNotifications" :key="Notifications._id">
+                    <h2 class="text-base font-semibold mb-1">{{ Notifications?._id }}</h2>
+                      
+                    <div class="" v-for="notification in Notifications.notifications" :key="notification._id">
+                            
+                        <div class="flex justify-end px-2 items-center mt-1">
+                                <time class="text-xs font-normal text-gray-400">{{ ShowTime(notification?.createdAt) }}</time>
+                                <span v-if="!notification?.read" class="w-1.5 h-1.5 mx-2 bg-green-400 rounded-full"></span>
+                        </div>
+
+                         <div @click="handleNotification(notification?._id,notification?.post._id)" class="py-2 px-2 border-b border-b-light-100 flex items-center justify-between rounded-md hover:cursor-pointer  gap-x-2">
+                    
+                            <div class="flex items-center gap-x-3 md:gap-x-2">
+                                <div class="">
+                                    <img  v-if="notification.notifier.avatar" :src="notification?.notifier.avatar.url" alt="" srcset="" class="h-10 w-10 object-fit rounded-full">
+                                    <img  v-else :src="blank" alt="" srcset="" class="h-10 w-10 object-fit rounded-full">
+                                </div>
+                            
+                                <div class="">
+                                    <h4 class="text-base">{{ notification?.notifier.username }}</h4>
+                                    <p class="text-sm" :class="[notification.read ? '':'font-semibold']">{{ notification?.message }}</p>
+                                </div>
+                
+                            </div>
+        
+
+                            <div class="flex items-center">
+                                
+                                <div class="" v-if="notification?.post.photos.length >0">
+                                    <img :src="notification.post.photos[0].path" alt="" srcset="" class="h-10 w-10 object-fit rounded-md">
+                                </div>
+                                
+                            </div>
+                       </div>
+                  </div>
+
+                </div>
+            </div>
+
+ 
+
+            
         </div>
 
         <!-- if a new has no notifications -->
@@ -48,7 +75,9 @@
 </template>
 
 <script setup>
-import pic from '../../assets/pic.jpg'
+import blank from '../../assets/blank.png'
+
+import {  useRouter} from 'vue-router'
 
 // vuex
 import { useStore } from 'vuex'
@@ -63,14 +92,18 @@ import "vue3-toastify/dist/index.css";
 // loader
 import Spinner from '../../components/Loader/Spinner.vue';
 
+// timestamp
+import { ShowTime} from '../../config/Timestamp'
+
 
 const loading = ref(false)
-const Notifications = ref([])
+const AllNotifications = ref([])
 const toastId = ref(null)
 const user = ref(null)
 const isEmpty =ref(false)
 
 const store=useStore()
+const router = useRouter()
 
 onMounted(()=>{
     user.value = store.getters.user
@@ -89,7 +122,7 @@ onMounted(()=>{
             if(response.data.length === 0){
                 isEmpty.value =true
             }
-            Notifications.value = response.data
+            AllNotifications.value = response.data
         }
     })
     .catch((err)=>{
@@ -113,6 +146,45 @@ onMounted(()=>{
     })
 
 })
+
+const handleNotification=async(notificationID,threadID)=>{
+    let response
+    let toastId
+    try {
+       
+       response = await BaseUrl.put(`/notification/${notificationID}/update`,{read:true},
+          {
+            headers:{
+                Authorization :`Bearer ${user.value.accessToken}`
+            }
+          }
+        )
+
+        if(response.status === 200 ){
+            console.log(response.data)
+            router.push(`/thread/${threadID}`)
+        }
+
+    } catch (error) {
+        const {response} = error
+
+        if(response.status === 500){
+            toastId = toast.warn(`${response.data}`,{
+                position:toast.POSITION.TOP_CENTER,
+                transition: toast.TRANSITIONS.SLIDE,
+                theme:'colored',
+                hideProgressBar:true,
+                autoClose:2000
+          })
+        }
+
+        return false
+    }
+    finally{
+        toast.remove(toastId)
+    }
+}
+
 
 </script>
 

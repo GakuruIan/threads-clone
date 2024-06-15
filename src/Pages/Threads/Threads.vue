@@ -101,7 +101,7 @@ const FetchThreads =()=>{
    }).then((response)=>{
        loading.value=true
        if(response.status==200 & response.statusText == 'OK'){
-           
+
         if(totalPages.value && pages.value > totalPages.value) return;
 
           Threads.value = [...Threads.value,...response.data.posts]

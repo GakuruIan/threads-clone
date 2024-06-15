@@ -9,7 +9,7 @@
                     <img class="w-10 h-10 rounded-full" :src="User?.avatar.url" alt="user photo" />
 
                     <div class="flex flex-col">
-                        <router-link :to="`@${User?.username}`" class="border-transparent text-gray-200 text-base md:text-base tracking-normal font-thin">{{ User.username }}</router-link>
+                        <router-link :to="`@${User?.username}`" class="border-transparent text-gray-200 text-base md:text-base tracking-normal font-thin">{{ User?.username }}</router-link>
                         <time class="text-xs font-normal text-gray-400">{{ ShowTime(Thread?.createdAt) }}</time>
                     </div>
                 </div>
@@ -159,6 +159,8 @@ const store = useStore()
 
 onMounted(()=>{
    user.value = store.getters.user
+
+   console.log(props.User)
 })
 
 const ShowTime = (timestamp)=>{
@@ -188,9 +190,9 @@ const ShowTime = (timestamp)=>{
 
 
 const handleLike = async(threadID)=>{
+
    try {
-    const result = await BaseUrl.post(`/like/${threadID}`,{},{
-         params:{user:user.value._id},
+    const result = await BaseUrl.post(`/like/${threadID}`,{user:props.User._id},{
          headers:{
             'Authorization' : `Bearer ${user.value.accessToken}`
          }

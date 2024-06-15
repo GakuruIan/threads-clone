@@ -14,6 +14,10 @@ import { onMounted } from 'vue';
 // routing
 import { useRouter } from 'vue-router'
 
+// toast
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+
 const store = useStore()
 const router = useRouter()
 
@@ -35,6 +39,26 @@ onMounted(()=>{
 
     socket.emit('userConnected',userID);
   });
+
+  socket.on('newNotification',(notification)=>{
+    toast(`${notification.notifier.username} ${notification.message}`,{
+    position:toast.POSITION.BOTTOM_CENTER,
+    transition:"slide",
+    autoClose:1500,
+    hideProgressBar:true
+    })
+    console.log(notification)
+  })
+
+  socket.on('newComment',(notification)=>{
+    toast(`${notification.notifier.username} ${notification.message}`,{
+    position:toast.POSITION.BOTTOM_CENTER,
+    transition:"slide",
+    autoClose:1500,
+    hideProgressBar:true
+    })
+
+  })
 
   socket.on('disconnect', () => {
     console.log('Disconnected from server');  

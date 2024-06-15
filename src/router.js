@@ -73,7 +73,7 @@ const routes = [
                 }
             },
             {
-                path:'nofitications',
+                path:'notifications',
                 components:{
                     content:Notification
                 }

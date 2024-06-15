@@ -14,7 +14,7 @@
         <v-icon name="md-addaphoto-outlined" scale="1.1"/>
       </router-link>
 
-      <router-link to="/nofitications">
+      <router-link to="/notifications">
         <v-icon name="ri-notification-4-line" scale="1.2" class="hover:cursor-pointer" />
       </router-link>
 

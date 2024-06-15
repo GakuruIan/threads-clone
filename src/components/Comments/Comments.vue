@@ -41,7 +41,6 @@
 </template>
 
 <script setup>
-  import pic from '../../assets/tshirt.jpg'
 
   const props =defineProps({
      Comment:Object
