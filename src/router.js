@@ -2,6 +2,7 @@ import { createMemoryHistory, createRouter,createWebHistory } from 'vue-router'
 
 // components
 import Login from './Pages/Auth/Login.vue'
+import ChangePassword from './Pages/Auth/ChangePassword.vue'
 import Register from './Pages/Auth/Register.vue'
 import Main from './Pages/Main/Main.vue'
 import Threads from './Pages/Threads/Threads.vue'
@@ -22,6 +23,7 @@ const routes = [
     {path:'/register',component:Register},
     {path:'/email-password',component:EmailPassword},
     {path:'/forgot-password',component:Recovery},
+    {path:'/change-password',component:ChangePassword},
     {
         path:'/',
         component:Main,

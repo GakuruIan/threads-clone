@@ -50,5 +50,96 @@
   </div>
 </template>
 <script setup>
+import { ref } from 'vue';
 import logo from '../../assets/logo.png'
+
+// axios
+import { BaseUrl } from '../../config/Axios';
+
+// toast
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+
+const isLoading = ref(false)
+
+
+const handleSubmit=async(FormData,form$)=>{
+    isLoading.value = true
+
+    const requestData = form$.requestData
+ 
+    form$.cancelToken  = form$.$vueform.services.axios.CancelToken.source()
+    let response;
+    let id;
+
+    try {
+
+      id = toast.loading("Submitting..",{
+        position:toast.POSITION.TOP_CENTER,
+        transition: toast.TRANSITIONS.SLIDE,
+        theme:'colored',
+        type:'info'
+      })
+
+       response = await BaseUrl.post('/reset-link',requestData,
+       {
+        cancelToken: form$.cancelToken.token,
+       })
+
+       if(response.status === 200){
+          toast.update(id,{
+          render:`${response.data.message}`,
+          autoClose:2000,
+          hideProgressBar: true,
+          theme:'colored',
+          type:'success',
+          position:toast.POSITION.TOP_CENTER
+          })
+      
+         toast.done(id);
+
+        //  route to the create password
+       }
+
+    } catch (error) {
+      const {response} = error
+
+      if(response.status === 404){
+
+          toast.update(id,{
+            render:response.data.message,
+            type:'error',
+            theme:'colored',
+            autoClose:2000,
+            hideProgressBar:true
+          })
+
+    
+        toast.done(id)
+      }
+    
+      if(response.status === 500){
+          toast.update(id,{
+          render:"Something went wrong. Try Again later",
+          type:'error',
+          theme:'colored',
+          autoClose:2000,
+          hideProgressBar:true
+        })
+
+      }
+
+
+    }
+    finally{
+      isLoading.value= false
+      toast.done(id)
+
+      setTimeout(()=>{
+        toast.remove(id)
+      },3000)
+
+    }
+}
+
 </script>

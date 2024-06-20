@@ -46,7 +46,7 @@
                                 :rules="['required','email']"
                              />
 
-                             <TextElement name="password" type="text" inputType='password' size="lg" label="Password" placeholder="Create Password" 
+                             <TextElement name="password" inputType='password' size="lg" label="Password" placeholder="Create Password" 
                     
                                 :override-class="{
                                     input:'border border-gray-100/20 w-full bg-dark-400 py-4 rounded-sm placeholder-gray-400',
