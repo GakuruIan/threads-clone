@@ -33,7 +33,7 @@
                  
             </div>
             
-            <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+            <div class="relative flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
 
                 <button @click="handleOpenMenu" type="button" class="flex text-sm  rounded-full md:me-0 outline-0 border-2 border-bubble " id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
                   
@@ -43,8 +43,14 @@
                 </button>
 
                  <!-- Dropdown menu -->
-                  <div v-if="isOpen" class="absolute top-10 hidden w-32 lg:block z-50  my-4 text-base list-none bg-dark-900 divide-y rounded-lg shadow divide-gray-600 transition-all duration-300 ease-in" id="user-dropdown">
-                          <div class="px-4 py-3">
+                  <div v-if="isOpen" class="absolute top-10 right-0 w-32 lg:block z-50  my-4 text-base list-none bg-dark-900  rounded-lg shadow  transition-all duration-300 ease-in" id="user-dropdown">
+                          <div>
+                            <button class="absolute right-2" @click="handleOpenMenu">
+                               <v-icon name="io-close" class="h-4 w-4 hover:cursor-pointer "/>
+                             </button>
+                          </div>
+
+                           <div class="px-4 py-3 border-b border-gray-600">
                             <span class="block text-sm  text-white">{{ User?.username }}</span>
                           </div>
                           <ul class="py-2" aria-labelledby="user-menu-button">

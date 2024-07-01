@@ -5,8 +5,8 @@
         </div>
          
         <div v-else>
-          <template v-for="thread in data?.posts" :key="thread._id">
-              <PostCard :Thread="thread" :User="data?.author"/>
+          <template v-for="thread in Threads" :key="thread._id">
+              <PostCard :Thread="thread" :Author="author"/>
            </template>
         </div>
     </div>
@@ -21,9 +21,14 @@ import PostCard from '../PostCard/PostCard.vue';
 import { BaseUrl } from '../../config/Axios';
 
 // vue
-import { onMounted,ref } from 'vue';
+import { onMounted,reactive,ref,computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute} from 'vue-router';
+
+// socket IO
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
 
 const router= useRoute()
 
@@ -32,24 +37,34 @@ const username= router.params.username
 // vuex
 const store= useStore()
 
-const data = ref(null)
+const author = ref(null)
+
+const ThreadsMap = reactive(new Map())
 const isEmpty = ref(false)
 
-const token = store.getters.user.accessToken
+const {accessToken,_id} = store.getters.user
 
 const FetchUserThreads=()=>{
    BaseUrl.get(`/user/${username}/threads`,
    {
         headers:{
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${accessToken}`
         }
       }
    ).then((response)=>{
-       if(response.status == 200){
-          if(response.data.posts.length === 0){
+      const {data,status} = response
+       if(status == 200){
+          if(data.posts.length === 0){
             isEmpty.value= true 
           }
-         data.value= response.data
+
+          author.value = data.author
+
+          data.posts.forEach(post => {
+            ThreadsMap.set(post._id,post)
+          });
+        
+          console.log(ThreadsMap);
        }
    })
    .catch((err)=>{
@@ -58,8 +73,37 @@ const FetchUserThreads=()=>{
 
 }
 
+const Threads = computed(() => Array.from(ThreadsMap.values()));
+
+
+
 onMounted(()=>{
     FetchUserThreads()
+
+    
+
+    
+    socket.on('postLiked', (data) => {
+        const post =  ThreadsMap.get(data.postId);
+        if (post) {
+          post.likesCount = data.likesCount;
+          if (data.currentUser === _id) {
+            post.isLikedByCurrentUser = data.isLikedByCurrentUser; 
+          }
+          
+        }
+   });
+
+   socket.on('postUnliked', (data) => {
+        const post =  ThreadsMap.get(data.postId);
+        if (post) {
+          post.likesCount = data.likesCount;
+          if (data.currentUser === _id) {
+            post.isLikedByCurrentUser = data.isLikedByCurrentUser; 
+          }
+          
+        }
+   });
 })
 
 </script>

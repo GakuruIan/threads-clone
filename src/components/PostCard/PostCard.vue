@@ -6,10 +6,10 @@
             <!-- card header -->
             <div class="relative flex items-center justify-between py-2 ">
                 <div class="flex items-center gap-x-2">
-                    <img class="w-10 h-10 rounded-full" :src="User?.avatar.url" alt="user photo" />
+                    <img class="w-10 h-10 rounded-full" :src="Author?.avatar.url" alt="user photo" />
 
                     <div class="flex flex-col">
-                        <router-link :to="`@${User?.username}`" class="border-transparent text-gray-200 text-base md:text-base tracking-normal font-thin">{{ User?.username }}</router-link>
+                        <router-link :to="`@${Author?.username}`" class="border-transparent text-gray-200 text-base md:text-base tracking-normal font-thin">{{ Author?.username }}</router-link>
                         <time class="text-xs font-normal text-gray-400">{{ ShowTime(Thread?.createdAt) }}</time>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                                 <a href="#" class="block px-4 py-2 hover:bg-light-100 dark:hover:text-white">Share</a>
                             </li>
 
-                            <li v-if="User?._id === user?._id">
+                            <li v-if="Author?._id === user?._id">
                               <button @click="handleDelete(Thread?._id)" class="w-full py-2 px-4 flex items-center gap-x-2 group text-sm hover:text-red-500 hover:bg-light-100">
                                 Delete
                                </button>
@@ -114,7 +114,7 @@
 
                     <div class="flex items-center gap-4 mb-4 md:mb-2">
                         <p class="text-sm text-gray-200  hover:text-gray-300">{{ Thread?.comments.length }} reply</p>
-                        <p class="text-sm text-gray-200  hover:text-gray-300">{{ Thread?.likes.length }} likes</p>
+                        <p class="text-sm text-gray-200  hover:text-gray-300">{{ Thread?.likesCount }} likes</p>
                     </div>
                 </div>
                
@@ -145,11 +145,15 @@ import { useStore } from 'vuex';
 // axios
 import { BaseUrl } from '../../config/Axios';
 
+// socket IO
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
 
 // prop of object
 const props=defineProps({
   Thread: Object,
-  User:Object  // owner of the post
+  Author:Object  // owner of the post
 })
 
 
@@ -160,7 +164,6 @@ const store = useStore()
 onMounted(()=>{
    user.value = store.getters.user
 
-   console.log(props.User)
 })
 
 const ShowTime = (timestamp)=>{
@@ -188,57 +191,15 @@ const ShowTime = (timestamp)=>{
   }
 }
 
-
-const handleLike = async(threadID)=>{
-
-   try {
-    const result = await BaseUrl.post(`/like/${threadID}`,{user:props.User._id},{
-         headers:{
-            'Authorization' : `Bearer ${user.value.accessToken}`
-         }
-      })
-
-   } catch (error) {
-    const {response} = error
-
-    if(response.status === 500){
-          toast.error("Something went wrong",{
-          type:'error',
-          theme:'colored',
-          autoClose:2000,
-          hideProgressBar:true
-        })
-       }
-
-      console.log(error)
-   }
+const handleLike=(threadID)=>{
+  socket.emit('likePost', {threadID,AuthorID:props.Author._id,currentUser:user.value._id});
 }
 
-const handleUnLike = async(threadID)=>{
-   try {
-    const result = await BaseUrl.post(`/unlike/${threadID}`,{},
-    {
-        headers:{
-            'Authorization' : `Bearer ${user.value.accessToken}`
-         }
-    }
-    )
-
-   } catch (error) {
-    const {response} = error
-
-    if(response.status === 500){
-          toast.error("Something went wrong",{
-          type:'error',
-          theme:'colored',
-          autoClose:2000,
-          hideProgressBar:true
-        })
-       }
-
-      console.log(error)
-   }
+const handleUnLike=(threadID)=>{
+  socket.emit('unlikePost',{threadID,currentUser:user.value._id})
 }
+
+
 
 const handleDropdown=(state)=>{
     OpenDropdown.value = state

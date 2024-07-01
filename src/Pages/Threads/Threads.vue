@@ -54,7 +54,7 @@
 
     <div class="" v-else >
       <template v-for="thread in Threads" :key="thread._id">
-        <PostCard :Thread="thread" :User="thread.author"/>
+        <PostCard :Thread="thread" :Author="thread.author"/>
       </template>
       <div class="" ref="observerRef" id="observer"></div>
     </div>
@@ -75,7 +75,12 @@ import { BaseUrl } from '../../config/Axios';
 
 // vuex
 import { useStore } from 'vuex';
-import { ref,onMounted,onUnmounted } from 'vue';
+import { ref,onMounted,onUnmounted, reactive,computed } from 'vue';
+
+// socket IO
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
 
 const store = useStore()
 const user = ref(null)
@@ -84,7 +89,8 @@ const observerRef = ref(null);
 const pages = ref(1);
 const totalPages = ref(0)
 const loading = ref(false)
-let Threads= ref([])
+
+let ThreadsMap = reactive(new Map())
 
 const limit=15
 
@@ -99,13 +105,18 @@ const FetchThreads =()=>{
       Authorization :`Bearer ${user.value.accessToken}`
     }
    }).then((response)=>{
+    const {data,status,statusText} = response
+
        loading.value=true
-       if(response.status==200 & response.statusText == 'OK'){
+       if(status==200 & statusText == 'OK'){
 
         if(totalPages.value && pages.value > totalPages.value) return;
 
-          Threads.value = [...Threads.value,...response.data.posts]
-          totalPages.value = response.data.totalPages
+          data.posts.forEach(post => {
+            ThreadsMap.set(post._id,post)
+          });
+
+          totalPages.value = data.totalPages
 
           pages.value += 1
        }
@@ -132,11 +143,37 @@ onMounted(()=>{{
 
   window.addEventListener('scroll',handleScroll)
   FetchThreads()
+
+  socket.on('postLiked', (data) => {
+        const post =  ThreadsMap.get(data.postId);
+        if (post) {
+          post.likesCount = data.likesCount;
+          if (data.currentUser === user.value._id) {
+            post.isLikedByCurrentUser = data.isLikedByCurrentUser; 
+          }
+          
+        }
+   });
+
+   socket.on('postUnliked', (data) => {
+        const post =  ThreadsMap.get(data.postId);
+        if (post) {
+          post.likesCount = data.likesCount;
+          if (data.currentUser === user.value._id) {
+            post.isLikedByCurrentUser = data.isLikedByCurrentUser; 
+          }
+          
+        }
+   });
+
+
 }})
 
 onUnmounted(() => {
 window.removeEventListener('scroll',handleScroll)
 });
+
+const Threads = computed(() => Array.from(ThreadsMap.values()));
 
 
 const handleSubmit=async(formData,form$)=>{

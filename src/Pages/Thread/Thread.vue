@@ -55,9 +55,15 @@
 
                     <div class="flex items-center gap-1 py-2">
 
-                        <div class="flex items-center justify-center h-8 w-8 rounded-full transition-all duration-75 hover:cursor-pointer hover:bg-light-100">
-                           <v-icon name="bi-heart" class="h-5 w-5"/>
-                       </div>
+                        <div class="">
+                            <button v-if="!Thread?.isLikedByCurrentUser" @click="handleLike(Thread._id)" class="flex items-center justify-center h-8 w-8 rounded-full transition-all duration-75 hover:cursor-pointer hover:bg-light-100">
+                               <v-icon name="bi-heart" class="h-5 w-5"/>
+                            </button>
+                            
+                            <button v-else @click="handleUnLike(Thread._id)" class="flex items-center justify-center h-8 w-8 rounded-full transition-all duration-75 hover:cursor-pointer hover:bg-light-100">
+                               <v-icon name="bi-heart-fill" class="h-5 w-5 text-red-600"/>
+                            </button>
+                        </div>
 
                        <div class="flex items-center justify-center h-8 w-8 rounded-full transition-all duration-75 hover:cursor-pointer hover:bg-light-100">
                            <v-icon name="la-retweet-solid" class="h-5 w-5"/>
@@ -75,7 +81,7 @@
                    <!-- likes and reply -->
                    <div class="flex items-center gap-4 mb-4">
                        <p class="text-sm text-gray-200  hover:text-gray-300">{{ Thread?.comments.length }} reply</p>
-                       <p class="text-sm text-gray-200  hover:text-gray-300">{{ Thread?.likes.length }} likes</p>
+                       <p class="text-sm text-gray-200  hover:text-gray-300">{{ Thread?.likesCount }} likes</p>
                    </div>
                     <!-- likes and reply -->
 
@@ -139,6 +145,11 @@ import "vue3-toastify/dist/index.css";
 // router
 const route = useRoute()
 
+// socket IO
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
+
 // reactive states
 const comment = ref('')
 const hasErrors = ref(false)
@@ -156,12 +167,8 @@ const Id = route.params.id
 const store = useStore()
 const {accessToken,_id} = store.getters.user
 
-
-
-onMounted(()=>{
-
-  fetching.value=true
-   BaseUrl(`/thread/${Id}`,
+const FetchThread=()=>{
+BaseUrl(`/thread/${Id}`,
    {
      headers:{
         'Authorization': `Bearer ${accessToken}`
@@ -170,7 +177,7 @@ onMounted(()=>{
    )
    .then((response)=>{
       if(response.status === 200){
-        console.log(response.data.post)
+        
         Thread.value = response.data.post
         isFollowing.value = response.data.isFollowing
         fetching.value=false
@@ -179,7 +186,67 @@ onMounted(()=>{
    .catch((err)=>{
       console.log(err)
    })
+}
+
+onMounted(()=>{
+
+  fetching.value=true
+
+  FetchThread()
+
+  socket.on('follow',(data)=>{
+      if(data.currentUser === _id){
+         isFollowing.value= data.isFollowing
+
+         if(data.isFollowing){
+            toast.info(`You started following ${Thread.value.author.username}`,
+             {
+                 position:toast.POSITION.BOTTOM_RIGHT,
+                 transition: toast.TRANSITIONS.SLIDE,
+                 theme:'colored',
+                 hideProgressBar:true,
+                 autoClose:2000,
+             }
+          )
+         }
+        else{
+            toast.info(`You have unfollowed ${Thread.value.author.username}`,
+             {
+                position:toast.POSITION.BOTTOM_RIGHT,
+                transition: toast.TRANSITIONS.SLIDE,
+                theme:'colored',
+                hideProgressBar:true,
+                autoClose:2000
+             }
+            )
+        }
+      }
+  })
+
+  socket.on('postLiked', (data) => {
+          Thread.value.likesCount = data.likesCount;
+          if (data.currentUser === _id) {
+            Thread.value.isLikedByCurrentUser = data.isLikedByCurrentUser; 
+          }
+   });
+
+   socket.on('postUnliked', (data) => {
+
+        Thread.value.likesCount = data.likesCount;
+          if (data.currentUser === _id) {
+            Thread.value.isLikedByCurrentUser = data.isLikedByCurrentUser; 
+          }
+   });
+   
 })
+
+const handleLike=(threadID)=>{
+  socket.emit('likePost', {threadID,AuthorID:Thread.value.author._id,currentUser:_id});
+}
+
+const handleUnLike=(threadID)=>{
+  socket.emit('unlikePost',{threadID,currentUser:_id})
+}
 
 
 const handleSubmit=()=>{
@@ -240,85 +307,13 @@ const handleSubmit=()=>{
 
 }
 
-
-const handleFollow=async()=>{
-   
-    BaseUrl.post('/follow',{
-        theOnebeingFollowed:Thread.value.author._id
-    },
-     {
-        headers:{
-            'Authorization': `Bearer ${accessToken}`
-        }
-     }
-    ).then((response)=>{
-        if(response.status === 200){
-            toast.info(`You started following ${Thread.value.author.username}`,
-             {
-                position:toast.POSITION.BOTTOM_RIGHT,
-                transition: toast.TRANSITIONS.SLIDE,
-                theme:'colored',
-                hideProgressBar:true,
-                autoClose:2000,
-             }
-            )
-        }
-    }).catch((err)=>{
-        const {response} = err
-
-        if(response.status=== 500){
-            toast.warn("An error occurred. Try again later",
-             {
-                position:toast.POSITION.BOTTOM_RIGHT,
-                transition: toast.TRANSITIONS.SLIDE,
-                theme:'colored',
-                hideProgressBar:true,
-                autoClose:2000
-             }
-            )
-        }
-        console.log(err)
-    })
-
+const handleFollow =()=>{
+    socket.emit('follow',{currentUser:_id,theOneBeingFollowed:Thread.value.author._id})
 }
 
 const handleUnFollow=()=>{
-    BaseUrl.post('/unfollow',{
-        theOnebeingUnFollowed:Thread.value.author._id
-    },
-     {
-        headers:{
-            'Authorization':`Bearer ${accessToken}`
-        }
-     }
-    ).then((response)=>{
-        if(response.status === 200){
-            toast.info(`You have unfollowed ${Thread.value.author.username}`,
-             {
-                position:toast.POSITION.BOTTOM_RIGHT,
-                transition: toast.TRANSITIONS.SLIDE,
-                theme:'colored',
-                hideProgressBar:true,
-                autoClose:2000
-             }
-            )
-        }
-    })
-    .catch((err)=>{
-        const {response} = err
-
-        if(response.status=== 500){
-            toast.warn("An error occurred. Try again later",
-             {
-                position:toast.POSITION.BOTTOM_RIGHT,
-                transition: toast.TRANSITIONS.SLIDE,
-                theme:'colored',
-                hideProgressBar:true,
-                autoClose:2000
-             }
-            )
-        }
-        console.log(err)
-    })
+    socket.emit('unfollow',{currentUser:_id,theOneBeingUnfollowed:Thread.value.author._id})  
 }
+
+
 </script>

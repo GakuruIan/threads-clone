@@ -47,7 +47,6 @@ onMounted(()=>{
     autoClose:1500,
     hideProgressBar:true
     })
-    console.log(notification)
   })
 
   socket.on('newComment',(notification)=>{
